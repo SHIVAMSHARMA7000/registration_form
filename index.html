@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+            background: var(--page-bg);
+            background-size: 400% 400%;
+            animation: gradientBG 24s ease-in-out infinite;
+            isolation: isolate;
+        }
+
+        /* Fixed Theme 1 palette */
+        :root {
+            --page-bg: linear-gradient(-45deg, #0b1020, #111827, #0f172a, #1f2937);
+            --form-bg: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(245,247,255,0.88) 45%, rgba(255,255,255,0.78) 100%);
+            --form-text: #111827;
+        }
+
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        /* Floating blurred blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.03);
+            filter: blur(80px);
+            animation: float 30s ease-in-out infinite;
+            z-index: 0;
+        }
+        .blob:nth-child(1) { top: 10%; left: 15%; width: 250px; height: 250px; animation-delay: 0s; }
+        .blob:nth-child(2) { top: 30%; left: 70%; width: 350px; height: 350px; animation-delay: 8s; }
+        .blob:nth-child(3) { top: 60%; left: 40%; width: 200px; height: 200px; animation-delay: 15s; }
+        .blob:nth-child(4) { top: 20%; left: 50%; width: 150px; height: 150px; animation-delay: 20s; }
+
+        @keyframes float {
+            0% { transform: translate(0,0) scale(1); opacity: 0.6; }
+            25% { transform: translate(30px,-20px) scale(1.05); opacity: 0.7; }
+            50% { transform: translate(-20px,30px) scale(0.95); opacity: 0.6; }
+            75% { transform: translate(15px,-15px) scale(1.03); opacity: 0.7; }
+            100% { transform: translate(0,0) scale(1); opacity: 0.6; }
+        }
+
+        /* Space background layers */
+        .space {
+            position: absolute;
+            inset: -20%;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.9), transparent 60%),
+                radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,0.8), transparent 60%),
+                radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.7), transparent 60%),
+                radial-gradient(2px 2px at 80% 70%, rgba(255,255,255,0.8), transparent 60%),
+                radial-gradient(1px 1px at 15% 60%, rgba(255,255,255,0.7), transparent 60%);
+            animation: starDrift 50s linear infinite;
+            filter: blur(0.2px);
+            opacity: 0.75;
+        }
+
+        .space::before,
+        .space::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.8), transparent 60%),
+                radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.7), transparent 60%),
+                radial-gradient(2px 2px at 60% 60%, rgba(255,255,255,0.8), transparent 60%),
+                radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.6), transparent 60%);
+            animation: starTwinkle 6s ease-in-out infinite;
+            opacity: 0.6;
+        }
+        .space::after {
+            animation-duration: 9s;
+            opacity: 0.4;
+        }
+
+        /* Star streaks to feel like flying */
+        .stars {
+            position: absolute;
+            inset: -10%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+            background-size: 180px 2px;
+            background-repeat: repeat;
+            opacity: 0.4;
+            animation: warp 6s linear infinite;
+        }
+
+        @keyframes warp {
+            0% { transform: translateX(-20%); opacity: 0.25; }
+            50% { opacity: 0.5; }
+            100% { transform: translateX(20%); opacity: 0.25; }
+        }
+
+        .nebula {
+            position: absolute;
+            inset: -10%;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(600px 300px at 20% 20%, rgba(88, 130, 255, 0.25), transparent 60%),
+                radial-gradient(500px 280px at 80% 70%, rgba(255, 120, 200, 0.18), transparent 60%),
+                radial-gradient(700px 400px at 50% 90%, rgba(80, 220, 255, 0.18), transparent 60%);
+            filter: blur(8px);
+            animation: nebulaPulse 12s ease-in-out infinite;
+        }
+
+        @keyframes starDrift {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(8%, -10%, 0) scale(1.03); }
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes nebulaPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.03); }
+        }
+
+        /* Flying light trail background animation */
+        .flight {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(0, 255, 255, 0.4) 60%, transparent 70%);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 60px rgba(0, 140, 255, 0.5);
+            animation: flightPath 12s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .flight::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 4px;
+            transform: translate(-5px, -50%) rotate(0deg);
+            background: linear-gradient(90deg, rgba(0,255,255,0.0), rgba(0,255,255,0.4), rgba(0,255,255,0.0));
+            filter: blur(2px);
+        }
+        @keyframes flightPath {
+            0% { transform: translate(-10vw, 10vh) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            35% { transform: translate(40vw, -5vh) scale(1.1); }
+            60% { transform: translate(70vw, 30vh) scale(0.9); }
+            85% { transform: translate(110vw, -10vh) scale(1.1); opacity: 1; }
+            100% { transform: translate(130vw, 10vh) scale(0.9); opacity: 0; }
+        }
+
+        .flight-2 {
+            animation-delay: 4s;
+            filter: hue-rotate(40deg);
+            opacity: 0.8;
+        }
+        .flight-3 {
+            animation-delay: 8s;
+            filter: hue-rotate(120deg);
+            opacity: 0.7;
+        }
+
+        /* Form container */
+        .container {
+            width: min(520px, 94vw);
+            background: var(--form-bg);
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.25) inset, 0 0 0 2px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+            color: var(--form-text);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            animation: formReveal 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+            transform: translateY(16px) scale(0.98);
+            backdrop-filter: blur(10px) saturate(120%);
+            overflow: hidden;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .center-wrap {
+            position: relative;
+            width: 100%;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 0 12px;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(900px 420px at -10% -20%, rgba(255,255,255,0.35), transparent 55%),
+                        radial-gradient(700px 320px at 120% 120%, rgba(120,180,255,0.22), transparent 60%);
+            opacity: 0.5;
+            pointer-events: none;
+            animation: softGlow 6s ease-in-out infinite;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 0 2px rgba(0,255,255,0.1);
+        }
+
+        h2 { text-align: center; margin-bottom: 15px; color: var(--form-text); }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00fff5, #00d4ff);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        form { width: 100%; }
+        fieldset { border: none; height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; align-items: stretch; width: 100%; min-height: 0; }
+        legend { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 10px; color: var(--form-text); }
+        .form-group { margin-bottom: 20px; position: relative; }
+
+        /* Floating label effect */
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 12px;
+            border: 1px solid #999;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fff;
+            color: #1f2937; /* Input text color */
+            transition: transform 0.25s ease, box-shadow 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+            caret-color: #000; /* Cursor color */
+        }
+
+        .form-group input::placeholder,
+        .form-group select option[disabled] {
+            color: #aaa; /* Placeholder / default option color */
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 14px;
+            left: 12px;
+            background: #fff;
+            padding: 0 4px;
+            color: #999; /* Label color */
+            font-size: 14px;
+            pointer-events: none;
+            transition: 0.3s ease all;
+        }
+
+        /* Input hover / focus lift effect */
+        .form-group input:hover, .form-group select:hover,
+        .form-group input:focus, .form-group select:focus {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+            border-color: #000;
+            color: #000; /* Text color on focus */
+            outline: none;
+        }
+
+        /* Label floats when input focused or has value */
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label,
+        .form-group select:focus + label,
+        .form-group select:not([value=""]) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #000; /* Matches input focus color */
+        }
+
+        .btn-group { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+        button, input[type="submit"] {
+            width: 120px; padding: 10px; border: none; background: #2563eb; color: #fff; font-size: 14px; border-radius: 6px; cursor: pointer;
+            transition: all 0.35s ease;
+        }
+        button:hover, input[type="submit"]:hover { background: #1d4ed8; transform: scale(1.05); }
+
+        /* Top controls */
+        .top-controls {
+            position: absolute;
+            top: calc(18px + env(safe-area-inset-top));
+            top: calc(18px + constant(safe-area-inset-top));
+            right: calc(18px + env(safe-area-inset-right));
+            right: calc(18px + constant(safe-area-inset-right));
+            left: calc(18px + env(safe-area-inset-left));
+            left: calc(18px + constant(safe-area-inset-left));
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            z-index: 30;
+            pointer-events: auto;
+        }
+
+        .form-toggle {
+            width: auto;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #f8fafc;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.25s ease;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+        }
+        .form-toggle:hover { transform: translateY(-1px); }
+
+        .container.hidden {
+            display: none;
+        }
+
+        /* Show animation: bouncing football + form reveal */
+        .reveal-ball {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 12;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.35));
+            background: transparent url("footbal.png") center / 100% no-repeat;
+            overflow: hidden;
+            mix-blend-mode: normal;
+        }
+        .reveal-ball::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 102%;
+            width: 70px;
+            height: 16px;
+            transform: translateX(-50%);
+            background: radial-gradient(closest-side, rgba(0,0,0,0.35), rgba(0,0,0,0.0));
+            filter: blur(2px);
+            opacity: 0;
+        }
+        .reveal-ball.animate {
+            animation: ballPulseBurst 1200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes ballPulseBurst {
+            0%   { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(0.15); filter: blur(10px); }
+            18%  { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(0.85); filter: blur(0); }
+            32%  { transform: translate3d(-50%, -50%, 0) scale(1.08); }
+            46%  { transform: translate3d(-50%, -50%, 0) scale(0.98); }
+            62%  { transform: translate3d(-50%, -50%, 0) scale(1.12); }
+            78%  { transform: translate3d(-50%, -50%, 0) scale(0.98); }
+            100% { opacity: 0; transform: translate3d(-50%, -50%, 0) scale(2.1); filter: blur(6px); }
+        }
+        .reveal-ball.animate::after {
+            animation: shadowPulseBurst 1200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes shadowPulseBurst {
+            0%   { opacity: 0; transform: translateX(-50%) scale(0.4); }
+            32%  { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
+            62%  { opacity: 0.25; transform: translateX(-50%) scale(0.9); }
+            100% { opacity: 0; transform: translateX(-50%) scale(1.5); }
+        }
+
+        .container.reveal {
+            display: block;
+            animation: formPop 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            transform-origin: 50% 30%;
+        }
+        @keyframes formPop {
+            0% { opacity: 0; transform: translateY(18px) scale(0.96); filter: blur(6px); }
+            60% { opacity: 1; transform: translateY(-2px) scale(1.01); filter: blur(0); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Modern load animations */
+        @keyframes formReveal {
+            0% { opacity: 0; transform: translateY(24px) scale(0.98); filter: blur(6px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes staggerIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes softGlow {
+            0% { opacity: 0.25; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0.25; }
+        }
+
+        .container > * {
+            animation: staggerIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+        }
+        .container > *:nth-child(1) { animation-delay: 0.15s; }
+        .container > *:nth-child(2) { animation-delay: 0.25s; }
+        .container > *:nth-child(3) { animation-delay: 0.35s; }
+        .container > *:nth-child(4) { animation-delay: 0.45s; }
+        .container > *:nth-child(5) { animation-delay: 0.55s; }
+
+        /* Responsive layout */
+        @media (max-width: 600px) {
+            body { padding: 16px 10px; align-items: flex-start; }
+            .center-wrap { padding: 72px 10px 24px; min-height: auto; }
+            .container { width: 100%; padding: 22px 16px; border-radius: 14px; }
+            .form-group { margin-bottom: 16px; }
+            .form-group input, .form-group select { padding: 12px 10px; font-size: 16px; }
+            legend { font-size: 16px; }
+            .btn-group { flex-direction: column; gap: 10px; }
+            button, input[type="submit"] { width: 100%; }
+            .top-controls {
+                position: fixed;
+                top: calc(10px + env(safe-area-inset-top));
+                top: calc(10px + constant(safe-area-inset-top));
+                right: calc(10px + env(safe-area-inset-right));
+                right: calc(10px + constant(safe-area-inset-right));
+                left: calc(10px + env(safe-area-inset-left));
+                left: calc(10px + constant(safe-area-inset-left));
+                justify-content: flex-end;
+            }
+            .form-toggle { padding: 10px 14px; font-size: 13px; }
+            #page4 { max-height: none; }
+        }
+        @media (max-width: 380px) {
+            .container { padding: 20px 14px; }
+            h2 { font-size: 18px; }
+            legend { font-size: 15px; }
+        }
+
+        @media (max-height: 700px) {
+            body { align-items: flex-start; }
+            .center-wrap { padding-top: 72px; padding-bottom: 24px; min-height: auto; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+
+        #passwordMsg { font-size: 13px; }
+        #page2, #page3, #page4 { display: none; }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: rgba(255,255,255,0.75);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+            table-layout: fixed;
+        }
+        .summary-table td { word-wrap: break-word; }
+        .summary-table td { overflow-wrap: anywhere; }
+        .summary-table th,
+        .summary-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .summary-table th {
+            width: 40%;
+            font-weight: 600;
+            color: #111827;
+            background: rgba(0,0,0,0.03);
+        }
+        .summary-table td {
+            color: #000;
+        }
+        .summary-table tr:last-child th,
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .saved-wrap {
+            margin-top: 16px;
+        }
+        .saved-title {
+            margin: 0 0 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .saved-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+            table-layout: fixed;
+        }
+        .saved-table td { word-wrap: break-word; }
+        .saved-table td { overflow-wrap: anywhere; }
+        .saved-table th:nth-child(1),
+        .saved-table td:nth-child(1) { width: 35%; }
+        .saved-table th:nth-child(2),
+        .saved-table td:nth-child(2) { width: 25%; }
+        .saved-table th:nth-child(3),
+        .saved-table td:nth-child(3) { width: 20%; }
+        .saved-table th:nth-child(4),
+        .saved-table td:nth-child(4) { width: 20%; }
+        .saved-table th,
+        .saved-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .saved-table th {
+            background: rgba(0,0,0,0.03);
+            font-weight: 600;
+        }
+        .saved-table tr:last-child td,
+        .saved-table tr:last-child th {
+            border-bottom: none;
+        }
+        .saved-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .action-btn {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: none;
+            background: #0f172a;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            flex: 1 1 48px;
+        }
+        .action-btn.delete {
+            background: #b91c1c;
+        }
+
+        #page4 {
+            overflow-y: auto;
+            gap: 12px;
+            align-items: stretch;
+            max-height: 56vh;
+        }
+
+        /* Swipe transitions between pages */
+        fieldset {
+            position: relative;
+            width: 100%;
+        }
+        .page-swipe {
+            animation: pageSwipe 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes pageSwipe {
+            0% { opacity: 0; transform: translateX(28px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="space"></div>
+<div class="stars"></div>
+<div class="nebula"></div>
+<div class="blob"></div>
+<div class="blob"></div>
+<div class="blob"></div>
+<div class="blob"></div>
+<div class="flight"></div>
+<div class="flight flight-2"></div>
+<div class="flight flight-3"></div>
+
+<div class="top-controls">
+    <button type="button" class="form-toggle" id="formToggle" onclick="toggleForm()">Show Form</button>
+</div>
+<div class="center-wrap">
+    <div class="reveal-ball" id="revealBall" aria-hidden="true"></div>
+    <div class="container hidden" id="formContainer">
+<h2>Student Registration</h2>
+
+<!-- Progress bar -->
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<form id="myForm" onsubmit="return showSummary()">
+
+<!-- PAGE 1 -->
+<fieldset id="page1">
+    <div>
+        <legend>Login Information</legend>
+        <div class="form-group"><input type="text" id="fname" pattern="[A-Za-z]+" placeholder=" " required><label>First Name</label></div>
+        <div class="form-group"><input type="text" id="lname" pattern="[A-Za-z]+" placeholder=" " required><label>Last Name</label></div>
+        <div class="form-group"><input type="email" id="email" placeholder=" " required><label>Email</label></div>
+        <div class="form-group"><input type="password" id="password" minlength="8" placeholder=" " required><label>Password</label></div>
+        <div class="form-group"><input type="password" id="confirmPassword" placeholder=" " oninput="checkPasswordMatch()" required><label>Confirm Password</label><span id="passwordMsg"></span></div>
+        <div class="form-group"><input type="text" id="phone" pattern="[0-9]{10}" maxlength="10" oninput="onlyNumber(this)" placeholder=" " required><label>Phone Number</label></div>
+    </div>
+    <div class="btn-group"><button type="button" onclick="nextPage(1)">Next</button></div>
+</fieldset>
+
+<!-- PAGE 2 -->
+<fieldset id="page2">
+    <div>
+        <legend>Parents Information</legend>
+        <div class="form-group"><input type="text" id="fatherName" pattern="[A-Za-z ]+" placeholder=" " required><label>Father's Name</label></div>
+        <div class="form-group"><input type="text" id="fatherPhone" pattern="[0-9]{10}" maxlength="10" oninput="onlyNumber(this)" placeholder=" " required><label>Father's Phone</label></div>
+        <div class="form-group"><input type="text" id="motherName" pattern="[A-Za-z ]+" placeholder=" " required><label>Mother's Name</label></div>
+        <div class="form-group"><input type="text" id="motherPhone" pattern="[0-9]{10}" maxlength="10" oninput="onlyNumber(this)" placeholder=" " required><label>Mother's Phone</label></div>
+    </div>
+    <div class="btn-group">
+        <button type="button" onclick="prevPage(2)">Previous</button>
+        <button type="button" onclick="nextPage(2)">Next</button>
+    </div>
+</fieldset>
+
+<!-- PAGE 3 -->
+<fieldset id="page3">
+    <div>
+        <legend>Semester Information</legend>
+        <div class="form-group"><input type="text" id="course" placeholder=" " required><label>Course</label></div>
+        <div class="form-group">
+            <select id="semester" required>
+                <option value="" disabled selected hidden></option>
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option><option>8</option>
+            </select><label>Semester</label>
+        </div>
+        <div class="form-group"><input type="text" id="regno" placeholder=" " required><label>Registration Number</label></div>
+    </div>
+    <div class="btn-group"><button type="button" onclick="prevPage(3)">Previous</button><input type="submit" value="Submit"></div>
+</fieldset>
+
+<!-- PAGE 4 -->
+<fieldset id="page4">
+    <div>
+        <legend>Submitted Information</legend>
+        <table class="summary-table">
+            <tr><th>Name</th><td id="s_name"></td></tr>
+            <tr><th>Email</th><td id="s_email"></td></tr>
+            <tr><th>Phone</th><td id="s_phone"></td></tr>
+            <tr><th>Father</th><td id="s_father"></td></tr>
+            <tr><th>Father Phone</th><td id="s_fphone"></td></tr>
+            <tr><th>Mother</th><td id="s_mother"></td></tr>
+            <tr><th>Mother Phone</th><td id="s_mphone"></td></tr>
+            <tr><th>Course</th><td id="s_course"></td></tr>
+            <tr><th>Semester</th><td id="s_sem"></td></tr>
+            <tr><th>Reg No</th><td id="s_reg"></td></tr>
+        </table>
+        <div class="saved-wrap">
+            <p class="saved-title">Saved in Browser (Local)</p>
+            <table class="saved-table" id="savedTable">
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Course</th>
+                    <th>Actions</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="btn-group"><button type="button" onclick="editForm()">Edit</button><button type="button" onclick="fillAgain()">Fill Again</button></div>
+</fieldset>
+
+</form>
+</div>
+</div>
+
+<script>
+function onlyNumber(i){ i.value=i.value.replace(/[^0-9]/g,''); }
+
+function updateProgress(page){
+    let progress = document.getElementById('progressBar');
+    if(page === 1) progress.style.width = "33%";
+    if(page === 2) progress.style.width = "66%";
+    if(page === 3) progress.style.width = "100%";
+}
+
+function nextPage(p){
+    let page=document.getElementById("page"+p);
+    let inputs=page.querySelectorAll("input,select");
+    for(let i of inputs){ if(!i.checkValidity()){ i.reportValidity(); return; } }
+    page.style.display="none";
+    let next = document.getElementById("page"+(p+1));
+    next.style.display="flex";
+    next.classList.remove("page-swipe");
+    void next.offsetWidth;
+    next.classList.add("page-swipe");
+    updateProgress(p+1);
+}
+
+function prevPage(p){
+    document.getElementById("page"+p).style.display="none";
+    let prev = document.getElementById("page"+(p-1));
+    prev.style.display="flex";
+    prev.classList.remove("page-swipe");
+    void prev.offsetWidth;
+    prev.classList.add("page-swipe");
+    updateProgress(p-1);
+}
+
+function checkPasswordMatch(){
+    let msg=document.getElementById("passwordMsg");
+    if(password.value===confirmPassword.value){ msg.innerHTML="Password matched"; msg.style.color="green"; }
+    else{ msg.innerHTML="Password must be same"; msg.style.color="red"; }
+}
+
+function showSummary(){
+    page3.style.display="none";
+    page4.style.display="flex";
+    page4.classList.remove("page-swipe");
+    void page4.offsetWidth;
+    page4.classList.add("page-swipe");
+    updateProgress(3);
+    s_name.innerText=fname.value+" "+lname.value;
+    s_email.innerText=email.value;
+    s_phone.innerText=phone.value;
+    s_father.innerText=fatherName.value;
+    s_fphone.innerText=fatherPhone.value;
+    s_mother.innerText=motherName.value;
+    s_mphone.innerText=motherPhone.value;
+    s_course.innerText=course.value;
+    s_sem.innerText=semester.value;
+    s_reg.innerText=regno.value;
+
+    saveToLocal();
+    renderSaved();
+    return false;
+}
+
+function editForm(){ page4.style.display="none"; page1.style.display="flex"; updateProgress(1); }
+
+function fillAgain(){ 
+    myForm.reset(); 
+    page4.style.display="none"; 
+    page1.style.display="flex"; 
+    passwordMsg.innerHTML=""; 
+    updateProgress(1);
+}
+
+function getSaved(){
+    let raw = localStorage.getItem("studentRegistrations");
+    return raw ? JSON.parse(raw) : [];
+}
+
+function setSaved(list){
+    localStorage.setItem("studentRegistrations", JSON.stringify(list));
+}
+
+function saveToLocal(){
+    let list = getSaved();
+    list.push({
+        name: fname.value+" "+lname.value,
+        email: email.value,
+        phone: phone.value,
+        father: fatherName.value,
+        fphone: fatherPhone.value,
+        mother: motherName.value,
+        mphone: motherPhone.value,
+        course: course.value,
+        sem: semester.value,
+        reg: regno.value
+    });
+    setSaved(list);
+}
+
+function renderSaved(){
+    let table = document.getElementById("savedTable");
+    let list = getSaved();
+    table.innerHTML = `
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+    `;
+    list.forEach((item, idx) => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.phone}</td>
+            <td>${item.course}</td>
+            <td>
+                <div class="saved-actions">
+                    <button type="button" class="action-btn" onclick="editSaved(${idx})">Edit</button>
+                    <button type="button" class="action-btn delete" onclick="deleteSaved(${idx})">Delete</button>
+                </div>
+            </td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+function editSaved(idx){
+    let list = getSaved();
+    let item = list[idx];
+    if(!item) return;
+    fname.value = item.name.split(" ")[0] || "";
+    lname.value = item.name.split(" ").slice(1).join(" ");
+    email.value = item.email;
+    phone.value = item.phone;
+    fatherName.value = item.father;
+    fatherPhone.value = item.fphone;
+    motherName.value = item.mother;
+    motherPhone.value = item.mphone;
+    course.value = item.course;
+    semester.value = item.sem;
+    regno.value = item.reg;
+    page4.style.display="none";
+    page1.style.display="flex";
+    updateProgress(1);
+}
+
+function deleteSaved(idx){
+    let list = getSaved();
+    list.splice(idx, 1);
+    setSaved(list);
+    renderSaved();
+}
+
+window.addEventListener("load", renderSaved);
+
+function toggleForm(){
+    let container = document.getElementById("formContainer");
+    let toggle = document.getElementById("formToggle");
+    let ball = document.getElementById("revealBall");
+    if(container.classList.contains("hidden")){
+        ball.classList.remove("animate");
+        void ball.offsetWidth;
+        ball.classList.add("animate");
+        toggle.innerText = "Hide Form";
+        setTimeout(() => {
+            container.classList.remove("hidden");
+            container.classList.add("reveal");
+            setTimeout(() => container.classList.remove("reveal"), 700);
+        }, 1500);
+    } else {
+        container.classList.add("hidden");
+        toggle.innerText = "Show Form";
+    }
+}
+</script>
+</body>
+</html>
